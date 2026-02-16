@@ -1,20 +1,34 @@
 import pandas as pd
-from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
-import joblib
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
+import pickle
 
-df = pd.read_csv("pcos_dataset.csv")
+print("Loading dataset...")
+df = pd.read_csv('pcos_dataset.csv')
 
-X = df.drop("PCOS", axis=1)
-y = df["PCOS"]
+# Prepare features
+feature_cols = ['Age', 'BMI', 'Cycle_Length', 'LH_Level', 'FSH_Level',
+                'Insulin_Level', 'LH_FSH_Ratio', 'Acne_Severity', 'Hirsutism_Score']
+X = df[feature_cols]
+y = df['PCOS_Diagnosis']
 
-X_train, X_test, y_train, y_test = train_test_split(
-    X, y, test_size=0.2, random_state=42
-)
+# Split data
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-model = RandomForestClassifier()
+print("\n🤖 Training Random Forest model...")
+model = RandomForestClassifier(n_estimators=100, max_depth=10, random_state=42)
 model.fit(X_train, y_train)
 
-joblib.dump(model, "model.pkl")
+# Evaluate
+y_pred = model.predict(X_test)
+print("\n📊 Model Performance:")
+print(f"Accuracy:  {accuracy_score(y_test, y_pred)*100:.2f}%")
+print(f"Precision: {precision_score(y_test, y_pred)*100:.2f}%")
+print(f"Recall:    {recall_score(y_test, y_pred)*100:.2f}%")
+print(f"F1-Score:  {f1_score(y_test, y_pred)*100:.2f}%")
 
-print("Model trained and saved as model.pkl")
+# Save model
+with open('model.pkl', 'wb') as f:
+    pickle.dump(model, f)
+print("\n✅ Model saved: model.pkl")
