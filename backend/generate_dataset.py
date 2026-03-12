@@ -40,6 +40,6 @@ df['PCOS_Diagnosis'] = (risk_score > 0.5).astype(int)
 
 # Save
 df.to_csv('pcos_dataset.csv', index=False)
-print(f"✅ Dataset saved: pcos_dataset.csv")
+print(f"Dataset saved: pcos_dataset.csv")
 print(f"Total samples: {len(df)}")
 print(f"PCOS positive: {df['PCOS_Diagnosis'].sum()} ({df['PCOS_Diagnosis'].mean()*100:.1f}%)")
